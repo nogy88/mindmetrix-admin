@@ -1,0 +1,24 @@
+.logout-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ccc;
+  padding: 10px;
+}
+
+.arrow-top {
+  content: ".";
+  width: 10px;
+  height: 10px;
+  display: block;
+  /* background: #fff; */
+  position: relative;
+  top: 0;
+  left: 0;
+  margin-left: 70%;
+  border: 1px solid #eee;
+  border-bottom-width: 0;
+  border-right-width: 0;
+  transform: rotate(45deg);
+  margin-bottom: -4px;
+}

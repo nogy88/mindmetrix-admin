@@ -1,0 +1,55 @@
+@import '~antd/lib/style/color/colorPalette.less';
+@import '~antd/dist/antd.less';
+@import '~antd/lib/style/themes/default.less'; //will import light theme colors defined by antd
+@import 'light.less';
+
+@primary-color: #5580e9; //this will override primary color for light theme defined by antd
+
+// Switch
+@switch-bg: @white;
+@switch-color: @primary-color;
+@switch-shadow-color: fade(#fff, 20%);
+@switch-disabled-opacity: 0.4;
+
+// Menu
+// ---
+@menu-inline-toplevel-item-height: 40px;
+@menu-item-height: 40px;
+@menu-item-group-height: @line-height-base;
+@menu-collapsed-width: 80px;
+@menu-bg: @menu-dark-bg;
+@menu-popup-bg: @menu-dark-bg;
+@menu-item-color: @white;
+@menu-inline-submenu-bg: @menu-dark-bg;
+@menu-highlight-color: @primary-color;
+@menu-highlight-danger-color: @error-color;
+@menu-item-active-bg: @menu-dark-item-active-bg;
+@menu-item-active-danger-bg: @red-1;
+@menu-item-active-border-width: 3px;
+@menu-item-group-title-color: @text-color-secondary;
+@menu-item-vertical-margin: 4px;
+@menu-item-font-size: @font-size-base;
+@menu-item-boundary-margin: 8px;
+@menu-item-padding-horizontal: 20px;
+@menu-item-padding: 0 @menu-item-padding-horizontal;
+@menu-horizontal-line-height: 46px;
+@menu-icon-margin-right: 10px;
+@menu-icon-size: @menu-item-font-size;
+@menu-icon-size-lg: @font-size-lg;
+@menu-item-group-title-font-size: @menu-item-font-size;
+// dark theme
+// @menu-dark-color: @text-color-secondary-dark;
+@menu-dark-danger-color: @error-color;
+@menu-dark-bg: @layout-sider-background;
+@menu-dark-arrow-color: #fff;
+@menu-dark-inline-submenu-bg: @text-color-secondary-dark;
+@menu-dark-highlight-color: #fff;
+@menu-dark-item-active-bg: @primary-color;
+@menu-dark-item-active-danger-bg: @error-color;
+@menu-dark-selected-item-icon-color: @white;
+@menu-dark-selected-item-text-color: @white;
+@menu-dark-item-hover-bg: transparent;
+
+// Layout
+@layout-header-background: @white; //0C2D48
+@layout-sider-background: #0C2D48;

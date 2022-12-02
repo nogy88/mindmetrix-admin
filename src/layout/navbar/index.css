@@ -1,0 +1,24 @@
+.app-header.ant-layout-header {
+  padding: 0;
+  padding-left: 10px;
+  min-width: 470px;
+  max-width: 100%;
+
+  @media only screen and (max-width: 470px) {
+    display: none;
+  }
+}
+
+.user-actions {
+  margin-right: 10px;
+  float: right;
+
+  @media only screen and (max-width: 320px) {
+    background: #000;
+    color: #fff;
+  }
+
+  @media only screen and (max-width: 780px) {
+    display: none;
+  }
+}
