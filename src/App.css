@@ -34,3 +34,8 @@
   border-radius: 10px;
   margin-bottom: 5px;
 }
+
+.package-upload > .ant-upload.ant-upload-select-picture-card {
+  width: 230px;
+  height: 230px;
+}

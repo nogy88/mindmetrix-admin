@@ -1,9 +1,15 @@
-import React from "react";
-import { Tag } from "antd";
-import { CustomTable, Tabledit, Page } from "components";
+import React, { useState } from "react";
+import { Image, Tag } from "antd";
+import { CustomTable, Page } from "components";
 import { category } from "api/endpoints";
+import CategoryForm from "./Form";
 
 function CategoryList() {
+  const [refresh, setRefresh] = useState(false);
+  const [modalData, setModalData] = useState({
+    visible: false,
+    editId: null,
+  });
   const breadcrumb = [
     {
       icon: "BarsOutlined",
@@ -29,6 +35,16 @@ function CategoryList() {
     {
       title: "Зураг",
       dataIndex: "img",
+      render: (val) => {
+        return (
+          <Image
+            src={`http://mx.itg.mn/Storage//Data//Category/${val}`}
+            height={100}
+            width={100}
+            preview={false}
+          />
+        );
+      },
     },
     {
       title: "Эрэмбэ",
@@ -59,14 +75,16 @@ function CategoryList() {
         endpoint={category.category}
         endpoints={category.categories}
         primaryKey={"categoryId"}
+        addFunc={() => setModalData({ editId: null, visible: true })}
+        onEdit={(val) => setModalData({ editId: val, visible: true })}
+        refresh={refresh}
       />
-      {/* <Tabledit
-        title={"Категориудын жагсаалт"}
-        primaryKey="businessId"
-        endpoint={{ url: category.category }}
-        endpoints={category.categories}
-        columns={columns}
-      /> */}
+      <CategoryForm
+        visible={modalData.visible}
+        editId={modalData.editId}
+        handleClose={() => setModalData({ editId: null, visible: false })}
+        refreshTable={() => setRefresh(!refresh)}
+      />
     </Page>
   );
 }

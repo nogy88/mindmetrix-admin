@@ -5,7 +5,6 @@ import QuestionForm from "./QuestionForm";
 
 function QuestionItem({ question, index, refreshTable }) {
   const [editMode, setEditMode] = useState(false);
-
   return (
     <Col span={24} className="question-item">
       {editMode ? (
@@ -19,7 +18,7 @@ function QuestionItem({ question, index, refreshTable }) {
       ) : (
         <Row justify="space-between">
           <Col style={{ marginRight: "5px" }}>
-            {index}. {question?.questionTxt}
+            {index + 1}. {question?.questionTxt}
           </Col>
           {!editMode ? (
             <Col>

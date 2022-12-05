@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Tag } from "antd";
 import { Tabledit, Page } from "components";
 import { business } from "api/endpoints";
@@ -19,7 +19,7 @@ function BusinessList() {
 
   const columns = [
     {
-      title: "Нэр",
+      title: "Бизнесийн Нэр",
       dataIndex: "name",
     },
     {
@@ -45,13 +45,6 @@ function BusinessList() {
 
   return (
     <Page breadcrumb={breadcrumb}>
-      {/* <CustomTable
-        title={"Бизнесийн жагсаалт"}
-        columns={columns}
-        endpoint={business.business}
-        endpoints={business.businesses}
-        primaryKey={"businessId"}
-      /> */}
       <Tabledit
         title={"Бизнесийн жагсаалт"}
         primaryKey="businessId"

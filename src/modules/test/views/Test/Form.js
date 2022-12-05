@@ -109,7 +109,27 @@ const TestForm = () => {
         image: { ...state.image, src: `http://mx.itg.mn/${res.data.imgPath}` },
       });
 
-      console.log("res ", res.data);
+      var tempCats = [];
+      res.data.testCategorys.map((el) =>
+        tempCats.push({
+          val: el.groupId + "",
+          txt: el.name,
+        })
+      );
+      // setSelectedTestCats(tempCats);
+      console.log("tempCats ", tempCats);
+
+      var tempAges = [];
+      res.data.testAges.map((el) =>
+        tempAges.push({
+          val: el.testId + "",
+          txt: el.ageType,
+        })
+      );
+      // setSelectedTestAges(tempAges);
+
+      console.log("tempAges ", tempAges);
+
       form.setFieldsValue(res.data);
     } catch (error) {
       setState({ ...state, loading: false });
@@ -169,7 +189,7 @@ const TestForm = () => {
               : null),
             // testCategorys: tempCats,
             // testAges: tempTestAges,
-            exampleReport: "string",
+            // exampleReport: "string",
           });
         } else {
           let tempCats = [];
@@ -183,7 +203,7 @@ const TestForm = () => {
             }),
             testCategorys: tempCats,
             testAges: tempTestAges,
-            exampleReport: "string",
+            // exampleReport: "string",
           });
         }
         message.success("Мэдээллийг амжилттай хадгаллаа.");
@@ -263,7 +283,7 @@ const TestForm = () => {
                   />
                   <FormItem
                     label="Тестийн категори"
-                    name={"testCategorys"}
+                    // name={"testCategorys"}
                     itemType="multipleSelect"
                     selected={selectedTestCats}
                     setSelected={(val) => setSelectedTestCats(val)}
@@ -273,11 +293,11 @@ const TestForm = () => {
                   />
                   <FormItem
                     label="Насны ангилал"
-                    name={"testAges"}
+                    // name={"testAges"}
                     dtsrc={testAges}
                     itemType="multipleSelect"
                     selected={selectedTestAges}
-                    setSelected={setSelectedTestAges}
+                    setSelected={(val) => setSelectedTestAges(val)}
                     span={8}
                     // required
                   />

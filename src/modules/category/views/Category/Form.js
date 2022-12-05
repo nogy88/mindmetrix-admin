@@ -1,70 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { Form, Row, message, Upload } from "antd";
-import { Page, FormItem } from "components";
+import { Form, Row, message, Upload, Drawer, Skeleton } from "antd";
+import { FormItem, CustomButton } from "components";
 import { category, uploadFile } from "api/endpoints";
 import { postRequest, getRequest, putRequest } from "api";
-import { useNavigate, useParams } from "react-router-dom";
 import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
 
-const BusinessForm = () => {
-  const initialState = {
-    image: { src: "", isUpdated: false },
-    loading: false,
-    imageRespone: "",
-  };
-  const [image, setImage] = useState(initialState);
-
-  const navigate = useNavigate();
-
-  let { categoryId } = useParams();
-
+const CategoryForm = ({ visible, handleClose, refreshTable, editId }) => {
   const [form] = Form.useForm();
-
-  function getBase64(img, callback) {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => callback(reader.result));
-    reader.readAsDataURL(img);
-  }
+  const [loading, setLoading] = useState(false);
 
   const [state, setState] = useState({
-    loading: false,
     mode: "NEW",
     data: {},
+    imageRespone: "",
+    image: { src: "", isUpdated: false },
+    loading: false,
   });
-
-  const breadcrumb = [
-    {
-      icon: "IdcardOutlined",
-      href: null,
-      text: "Категори",
-    },
-    {
-      icon: "ApartmentOutlined",
-      href: category.categories,
-      text: "Категориудын жагсаалт",
-    },
-    {
-      icon: "FormOutlined",
-      href: "/",
-      text: state.mode === "NEW" ? "Категори бүртгэх" : "Категори засах",
-    },
-  ];
 
   const submit = async () => {
     form
       .validateFields()
       .then(async (values) => {
-        if (state.mode === "EDIT") {
-          await putRequest(category.category, values);
+        setLoading(true);
+
+        if (editId) {
+          await putRequest(category.category, {
+            ...values,
+            categoryId: +editId,
+            img: state.imageRespone,
+          });
         } else {
           await postRequest(category.category, {
             ...values,
-            img: image.imageRespone,
+            img: state.imageRespone,
           });
         }
         message.success("Мэдээллийг амжилттай хадгаллаа.");
-        // getProduct(values.prodCode);
-        navigate(category.categoryes);
+        setLoading(false);
+        setInitial();
+        refreshTable();
       })
       .catch((err) => {
         setState({ loading: false });
@@ -74,28 +48,42 @@ const BusinessForm = () => {
 
   const getCategory = async (categoryId) => {
     try {
-      setState({ loading: true });
+      setState({ ...state, loading: true });
+
       const res = await getRequest(`${category.category}/${categoryId}`);
-      setState({ mode: "EDIT", loading: false, data: res.data });
+      setState({
+        ...state,
+        mode: "EDIT",
+        loading: false,
+        data: res.data,
+        imageRespone: res.data.img,
+        image: { ...state.image, src: `http://mx.itg.mn/${res.data.imgPath}` },
+      });
       form.setFieldsValue(res.data);
     } catch (error) {
       setState({ loading: false });
     }
   };
 
-  const handleChange = async ({ file }) => {
+  function getBase64(img, callback) {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+
+  const imgHandleChange = async ({ file }) => {
     try {
       const formData = new FormData();
       await formData.append("File", file.originFileObj);
       const res = await postRequest(uploadFile.uploadFile, formData);
       if (file.status === "uploading") {
-        setImage({ ...image, loading: true, imageRespone: res.data });
+        setState({ ...state, loading: true, imageRespone: res.data });
         return;
       }
       if (file.status === "done") {
         getBase64(file.originFileObj, (imageUrl) =>
-          setImage({
-            ...image,
+          setState({
+            ...state,
             image: { src: imageUrl, isUpdated: true },
             loading: false,
             imageRespone: res.data,
@@ -103,91 +91,115 @@ const BusinessForm = () => {
         );
       }
     } catch (error) {
-      console.log("caught an error");
       console.log(error);
     }
   };
-  // const handleAvatar = (info) => {
-  //   getBase64(info.file.originFileObj, (img) => {
-  //     setImage({ src: img, isLink: false });
-  //   });
-  // };
 
+  const setInitial = () => {
+    handleClose();
+    form.resetFields();
+    state.image.src = "";
+  };
   useEffect(() => {
-    if (categoryId !== "new") {
-      getCategory(categoryId);
+    if (editId) {
+      getCategory(editId);
     }
-  }, [categoryId]);
+  }, [editId, refreshTable]);
 
   return (
-    <Page breadcrumb={breadcrumb}>
-      <Form form={form} initialValues={{ categoryId: "" }} layout="vertical">
-        <Row gutter={[16]}>
-          <FormItem label="Нэр" name={"name"} required span={8} />
-          <FormItem label="Тайлбар" name={"desc"} required span={8} />
-          <Form.Item label="Зураг" required>
-            <Upload
-              name="avatar"
-              listType="picture-card"
-              className="rank-upload"
-              showUploadList={false}
-              customRequest={({ file, onSuccess }) => {
-                console.log("file->", file);
-                setTimeout(() => {
-                  onSuccess("ok");
-                }, 0.5);
-              }}
-              onChange={handleChange}
-            >
-              {image.image.src ? (
-                <img
-                  src={image.image.src}
-                  alt="avatar"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-              ) : (
-                <div>
-                  {image.loading ? <LoadingOutlined /> : <UploadOutlined />}
-                  <div style={{ marginTop: 8 }}>Зураг оруулах</div>
-                </div>
-              )}
-            </Upload>
-          </Form.Item>
+    <Drawer
+      placement={"right"}
+      closable={false}
+      title={editId ? "Категори засах" : "Категори нэмэх"}
+      onClose={setInitial}
+      visible={visible}
+      key={"onboardAns"}
+      width={400}
+      footer={
+        <div style={{ textAlign: "right" }}>
+          <CustomButton onClick={() => submit()} />
+        </div>
+      }
+    >
+      <Skeleton loading={loading}>
+        <Form
+          layout="vertical"
+          hideRequiredMark
+          // size="small"
+          scrollToFirstError
+          form={form}
+        >
+          <Row gutter={16}>
+            <Form.Item label="Зураг">
+              <Upload
+                name="avatar"
+                listType="picture-card"
+                className="package-upload "
+                showUploadList={false}
+                customRequest={({ file, onSuccess }) => {
+                  console.log("file->", file);
+                  setTimeout(() => {
+                    onSuccess("ok");
+                  }, 0.5);
+                }}
+                // beforeUpload={beforeUpload}
+                onChange={imgHandleChange}
+              >
+                {state.image?.src ? (
+                  <img
+                    src={state.image?.src}
+                    alt="avatar"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                ) : (
+                  <div>
+                    {state.loading ? <LoadingOutlined /> : <UploadOutlined />}
+                    <div style={{ marginTop: 8 }}>Зураг оруулах</div>
+                  </div>
+                )}
+              </Upload>
+            </Form.Item>
+            <FormItem label="Категорийн нэр" name={"name"} required />
+            <FormItem label="Тайлбар" name={"desc"} required />
 
-          <FormItem label="OrderNo" name={"orderNo"} required span={8} />
+            <FormItem
+              label="Эрэмбэ"
+              name={"orderNo"}
+              required
+              itemType="number"
+            />
 
-          <FormItem
-            span={8}
-            itemType="select"
-            label="Төлөв"
-            name={"status"}
-            dtsrc={[
-              {
-                val: "A",
-                txt: "Идэвхтэй",
-                orderNo: 1,
-                filter: null,
-                filter2: null,
-              },
-              {
-                val: "I",
-                txt: "Идэвхгүй",
-                orderNo: 2,
-                filter: null,
-                filter2: null,
-              },
-            ]}
-            required
-          />
-          <FormItem span={24} itemType="button" onClick={() => submit()} />
-        </Row>
-      </Form>
-    </Page>
+            <FormItem
+              itemType="select"
+              label="Төлөв"
+              name={"status"}
+              dtsrc={[
+                {
+                  val: "A",
+                  txt: "Идэвхтэй",
+                  orderNo: 1,
+                  filter: null,
+                  filter2: null,
+                },
+                {
+                  val: "I",
+                  txt: "Идэвхгүй",
+                  orderNo: 2,
+                  filter: null,
+                  filter2: null,
+                },
+              ]}
+              required
+            />
+          </Row>
+        </Form>
+      </Skeleton>
+    </Drawer>
   );
 };
 
-export default BusinessForm;
+export default CategoryForm;

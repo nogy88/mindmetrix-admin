@@ -74,10 +74,13 @@ function CustomTable({
         ...state,
         loading: true,
       });
-      const res = await getRequest(endpoints || "", {
-        ...state.filter,
-        ...otherFilters,
-      });
+      var res = [];
+      if (endpoints) {
+        res = await getRequest(endpoints || "", {
+          ...state.filter,
+          ...otherFilters,
+        });
+      }
       if (data) {
         setState({
           ...state,

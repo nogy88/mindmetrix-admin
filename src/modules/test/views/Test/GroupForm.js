@@ -46,8 +46,8 @@ function GroupForm({ visible, handleClose, groupId, refreshTable, testId }) {
         }
         message.success("Амжилттай хадгаллаа.");
         refreshTable();
+        setInitial();
         setLoading(false);
-        handleClose();
       })
       .catch((error) => {
         message.error(error.Message);

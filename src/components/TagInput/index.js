@@ -31,9 +31,15 @@ const TagInput = ({ selected, setSelected, dtsrc, props }) => {
       value={selected}
       style={{ width: "100%" }}
       options={options}
-      onChange={(value) => {
+      onChange={(value, options) => {
         // let newTags = [];
         // value.map((el) => newTags.push(el));
+        // console.table("value ", value);
+        // console.log("optionsss ", options);
+        // var temp = {
+        //   val: options[1].value,
+        //   txt: options[1].txt,
+        // };
         setSelected(value);
       }}
       {...props}
