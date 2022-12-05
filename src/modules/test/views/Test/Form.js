@@ -138,7 +138,7 @@ const TestForm = () => {
   };
 
   useEffect(() => {
-    if (testId !== "new") {
+    if (testId !== "new" && testId !== undefined && testId !== null) {
       fetchData();
     }
     // eslint-disable-next-line
@@ -178,7 +178,22 @@ const TestForm = () => {
     form
       .validateFields()
       .then(async (values) => {
-        if (state.mode === "EDIT") {
+        if (testId === "new") {
+          let tempCats = [];
+          selectedTestCats.map((cat) => tempCats.push({ categoryId: cat }));
+          let tempTestAges = [];
+          selectedTestAges.map((age) => tempTestAges.push({ ageType: age }));
+
+          await postRequest(test.test, {
+            ...values,
+            ...(state.image.isUpdated && {
+              img: state.imageRespone,
+            }),
+            testCategorys: tempCats,
+            testAges: tempTestAges,
+            // exampleReport: "string",
+          });
+        } else {
           await putRequest(test.test, {
             ...values,
             testId: +testId,
@@ -191,21 +206,8 @@ const TestForm = () => {
             // testAges: tempTestAges,
             // exampleReport: "string",
           });
-        } else {
-          let tempCats = [];
-          selectedTestCats.map((cat) => tempCats.push({ categoryId: cat }));
-          let tempTestAges = [];
-          selectedTestAges.map((age) => tempTestAges.push({ ageType: age }));
-          await postRequest(test.test, {
-            ...values,
-            ...(state.image.isUpdated && {
-              img: state.imageRespone,
-            }),
-            testCategorys: tempCats,
-            testAges: tempTestAges,
-            // exampleReport: "string",
-          });
         }
+
         message.success("Мэдээллийг амжилттай хадгаллаа.");
       })
       .catch((err) => {
