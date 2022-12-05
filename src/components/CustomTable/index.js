@@ -27,6 +27,7 @@ function CustomTable({
   onEdit,
   onShow,
   refresh,
+  setRefresh,
   otherFilters,
   actionCol = true,
   pagination = true,
@@ -139,6 +140,9 @@ function CustomTable({
     try {
       await deleteRequest(`${endpoint}/${record[primaryKey]}`);
       message.success("Мэдээллийг амжилттай устгалаа.");
+      if (data) {
+        setRefresh();
+      }
       fetchData();
     } catch (error) {
       message.error(`Алдаа гарлаа. ${error?.Message}`);

@@ -11,6 +11,7 @@ import GroupForm from "./GroupForm";
 import PageForm from "./PageForm";
 import MatrixForm from "./MatrixForm";
 import QuestionForm from "./QuestionForm";
+import QuestionItem from "./QuestionItem";
 const { Title } = Typography;
 
 const TestForm = () => {
@@ -101,11 +102,11 @@ const TestForm = () => {
       setState({ ...state, loading: true });
       const res = await getRequest(`${test.test}${testId}`);
       setState({
+        ...state,
         mode: "EDIT",
         loading: false,
         data: res.data,
-        imageRespone:
-          "https://animemotivation.com/wp-content/uploads/2022/06/Manager-jahy-oppai-500x500.jpg",
+        image: { ...state.image, src: `http://mx.itg.mn/${res.data.imgPath}` },
       });
 
       console.log("res ", res.data);
@@ -121,7 +122,7 @@ const TestForm = () => {
       fetchData();
     }
     // eslint-disable-next-line
-  }, [testId]);
+  }, [testId, refresh]);
 
   function getBase64(img, callback) {
     const reader = new FileReader();
@@ -149,7 +150,6 @@ const TestForm = () => {
         );
       }
     } catch (error) {
-      console.log("caught an error");
       console.log(error);
     }
   };
@@ -161,19 +161,21 @@ const TestForm = () => {
         if (state.mode === "EDIT") {
           await putRequest(test.test, {
             ...values,
-            testId: testId,
-            // ...(state.image.isUpdated && {
-            //   img: state.imageRespone,
-            // }),
+            testId: +testId,
+            ...(state.image.isUpdated
+              ? {
+                  img: state.imageRespone,
+                }
+              : null),
+            // testCategorys: tempCats,
+            // testAges: tempTestAges,
+            exampleReport: "string",
           });
-          message.success("put");
         } else {
-          message.success("post");
           let tempCats = [];
           selectedTestCats.map((cat) => tempCats.push({ categoryId: cat }));
           let tempTestAges = [];
           selectedTestAges.map((age) => tempTestAges.push({ ageType: age }));
-
           await postRequest(test.test, {
             ...values,
             ...(state.image.isUpdated && {
@@ -221,9 +223,9 @@ const TestForm = () => {
                     // beforeUpload={beforeUpload}
                     onChange={imgHandleChange}
                   >
-                    {state.imageRespone ? (
+                    {state.image?.src ? (
                       <img
-                        src={state.imageRespone}
+                        src={state.image?.src}
                         alt="avatar"
                         style={{
                           width: "100%",
@@ -400,10 +402,10 @@ const TestForm = () => {
           <Title level={3}>Хүчин зүйлс</Title>
           {state.data?.testFactors?.length > 0 && (
             <FactorList
-              // refresh={refresh.factor}
-              // setRefresh={() =>
-              //   setRefresh({ ...refresh, factor: !refresh.factor })
-              // }
+              refresh={refresh.factor}
+              setRefresh={() =>
+                setRefresh({ ...refresh, factor: !refresh.factor })
+              }
               data={state.data.testFactors}
               testId={testId}
             />
@@ -495,9 +497,6 @@ const TestForm = () => {
 
           {/* Асуултын жагсаалт */}
           <Row style={{ padding: "20px" }}>
-            {state?.data?.questions?.map((el) => (
-              <Col span={24}>{el.questionTxt}</Col>
-            ))}
             {formModal.questionForm.visible && (
               <QuestionForm
                 visible={formModal.questionForm.visible}
@@ -512,6 +511,13 @@ const TestForm = () => {
                 testId={testId}
               />
             )}
+            {state?.data?.questions?.map((question, index) => (
+              <QuestionItem
+                question={question}
+                index={index}
+                refreshTable={() => fetchData()}
+              />
+            ))}
           </Row>
 
           {/* Forms */}

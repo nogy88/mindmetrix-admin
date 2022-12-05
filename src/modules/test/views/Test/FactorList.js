@@ -60,6 +60,7 @@ function FactorList({ data, refresh, setRefresh, testId }) {
         addFunc={() => setFactorForm({ factorId: null, visible: true })}
         onEdit={(val) => setFactorForm({ factorId: val, visible: true })}
         refresh={refresh}
+        setRefresh={() => setRefresh()}
         expandable={{
           expandedRowRender: (record) => (
             <FactorResultList factorId={record.factorId} />
@@ -71,7 +72,7 @@ function FactorList({ data, refresh, setRefresh, testId }) {
         visible={factorForm.visible}
         factorId={factorForm.factorId}
         handleClose={() => setFactorForm({ factorId: null, visible: false })}
-        refreshTable={setRefresh}
+        setRefresh={() => setRefresh()}
         testId={testId}
       />
     </>

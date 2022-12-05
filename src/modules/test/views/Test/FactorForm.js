@@ -4,7 +4,7 @@ import { CustomButton, FormItem } from "components";
 import { getRequest, postRequest, putRequest } from "api";
 import { test, dict } from "api/endpoints";
 
-function FactorForm({ visible, handleClose, factorId, refreshTable, testId }) {
+function FactorForm({ visible, handleClose, factorId, setRefresh, testId }) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [factorType, setFactorType] = useState([]);
@@ -61,16 +61,16 @@ function FactorForm({ visible, handleClose, factorId, refreshTable, testId }) {
           await putRequest(test.factor, {
             ...values,
             factorId: factorId,
-            testId: testId,
+            testId: +testId,
           });
         } else {
           await postRequest(test.factor, {
             ...values,
-            testId: testId,
+            testId: +testId,
           });
         }
         message.success("Амжилттай хадгаллаа.");
-        refreshTable();
+        setRefresh();
         setLoading(false);
         handleClose();
       })

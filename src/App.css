@@ -18,3 +18,19 @@
 .ant-menu-item-selected {
   background-color: #889bae !important;
 }
+
+.question-item {
+  border: 2px solid #eee;
+  padding: 20px 30px;
+  border-radius: 10px;
+  margin-bottom: 5px;
+}
+
+.question-item:hover {
+  background-color: #eee;
+  box-shadow: 1px 1px 10px #eee;
+  border: 2px solid #eee;
+  padding: 20px 30px;
+  border-radius: 10px;
+  margin-bottom: 5px;
+}
